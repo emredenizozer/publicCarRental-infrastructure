@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   nginx:
-    container_name: driveNowDemo-frontend-nginx
+    container_name: publicCarRental-frontend-nginx
     image: nginx:1.13
     restart: always
     ports:
@@ -10,10 +10,10 @@ services:
     volumes:
     - ./nginx/conf.d:/etc/nginx/conf.d
     depends_on:
-    - drive-now-backend
+    - public-car-rental-backend
 
   mongodb:
-    container_name: driveNowDemo-mongo
+    container_name: publicCarRental-mongo
     image: mongo:latest
     environment:
       - MONGO_DATA_DIR=/data/db
@@ -24,12 +24,12 @@ services:
         - 27017:27017
     command: mongod --smallfiles --logpath=/dev/null
 
-  drive-now-backend:
+  public-car-rental-backend:
     restart: always
     build: $BACKEND_BUILD_PATH
-    working_dir: /driveNowBackend
+    working_dir: /publicCarRentalBackend
     volumes:
-      - $BACKEND_BUILD_PATH:/driveNowBackend
+      - $BACKEND_BUILD_PATH:/publicCarRentalBackend
       - ~/.m2:/root/.m2
     expose:
       - "8080"
