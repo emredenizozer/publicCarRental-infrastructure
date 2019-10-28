@@ -1,0 +1,39 @@
+version: '3.7'
+services:
+  nginx:
+    container_name: publicCarRental-frontend-nginx
+    image: nginx:1.13
+    restart: always
+    ports:
+    - 80:80
+    - 443:443
+    volumes:
+    - ./nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+    - public-car-rental-backend
+
+  mongodb:
+    container_name: publicCarRental-mongo
+    image: mongo:latest
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    volumes:
+      - ./data/db:/data/db
+    ports:
+        - 27017:27017
+    command: mongod --smallfiles --logpath=/dev/null
+
+  public-car-rental-backend:
+    restart: always
+    build: $BACKEND_BUILD_PATH
+    working_dir: /publicCarRentalBackend
+    volumes:
+      - $BACKEND_BUILD_PATH:/publicCarRentalBackend
+      - ~/.m2/local:/root/.m2
+    expose:
+      - "8080"
+    command: mvn clean spring-boot:run -Dspring.data.mongodb.host=mongodb
+    depends_on:
+      - mongodb
+
